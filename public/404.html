@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <title>AiDesign</title>
+    <!--
+      GitHub Pages SPA 重導 (rafgraph/spa-github-pages)。
+      Pages 對未知路徑回傳此 404.html;此腳本把當前路徑編碼成 query
+      後重導回 index.html,再由 index.html 的還原腳本接手交給 react-router。
+      pathSegmentsToKeep = 1:Project Pages 需保留 repo 段 (/AiDesign)。
+    -->
+    <script type="text/javascript">
+      var pathSegmentsToKeep = 1;
+      var l = window.location;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
+      );
+    </script>
+  </head>
+  <body></body>
+</html>

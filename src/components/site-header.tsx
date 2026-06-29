@@ -1,6 +1,8 @@
 import { Menu } from "lucide-react"
+import { Link, NavLink } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
+import { ModeToggle } from "@/components/mode-toggle"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -16,82 +18,90 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 
-/** 首頁導覽項目;目前為單頁錨點,導入 router 後改為路由路徑。 */
-const NAV_ITEMS: ReadonlyArray<{ label: string; href: string }> = [
-  { label: "Home", href: "#home" },
-  { label: "Works", href: "#works" },
-  { label: "Services", href: "#services" },
-  { label: "Blog", href: "#blog" },
-  { label: "Contact", href: "#contact" },
+/** 首頁導覽項目;`to` 對應 react-router 路由路徑。 */
+const NAV_ITEMS: ReadonlyArray<{ label: string; to: string }> = [
+  { label: "Home", to: "/" },
+  { label: "Works", to: "/works" },
+  { label: "Services", to: "/services" },
+  { label: "Blog", to: "/blog" },
+  { label: "Contact", to: "/contact" },
 ]
 
 /**
- * Responsive site header for the AiDesign homepage.
+ * Responsive site header for AiDesign.
  *
- * Renders a sticky top bar with the brand on the left. On viewports ≥ md the
- * navigation links are shown inline via NavigationMenu; below md they collapse
- * into a hamburger button that opens a Sheet drawer. Tapping a drawer link
- * closes the drawer automatically through SheetClose.
+ * Sticky bar with the brand on the left, a theme toggle on the right, and
+ * navigation that shows inline (NavigationMenu) on viewports ≥ md or collapses
+ * into a hamburger-triggered Sheet drawer below md. Links use react-router so
+ * navigation is client-side; tapping a drawer link closes it via SheetClose.
  *
  * Returns:
- *     The header element for the page layout.
+ *     The header element for the layout.
  */
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4">
-        <a href="#home" className="font-heading text-lg font-semibold tracking-tight">
+        <Link to="/" className="font-heading text-lg font-semibold tracking-tight">
           AiDesign
-        </a>
+        </Link>
 
-        {/* 桌面:水平導覽 (≥ md) */}
-        <NavigationMenu className="hidden md:flex">
-          <NavigationMenuList className="gap-1">
-            {NAV_ITEMS.map((item) => (
-              <NavigationMenuItem key={item.href}>
-                <NavigationMenuLink href={item.href} className="px-3 py-2">
-                  {item.label}
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            ))}
-          </NavigationMenuList>
-        </NavigationMenu>
-
-        {/* 手機:漢堡 + 抽屜 (< md) */}
-        <Sheet>
-          <SheetTrigger
-            render={
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden"
-                aria-label="開啟導覽選單"
-              />
-            }
-          >
-            <Menu />
-          </SheetTrigger>
-          <SheetContent side="right" className="w-72">
-            <SheetHeader>
-              <SheetTitle>AiDesign</SheetTitle>
-            </SheetHeader>
-            <nav className="flex flex-col gap-1 px-2 pb-4">
+        <div className="flex items-center gap-2">
+          {/* 桌面:水平導覽 (≥ md) */}
+          <NavigationMenu className="hidden md:flex">
+            <NavigationMenuList className="gap-1">
               {NAV_ITEMS.map((item) => (
-                <SheetClose
-                  key={item.href}
-                  render={
-                    <a
-                      href={item.href}
-                      className="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-muted"
-                    >
-                      {item.label}
-                    </a>
-                  }
-                />
+                <NavigationMenuItem key={item.to}>
+                  <NavigationMenuLink
+                    render={<NavLink to={item.to} end={item.to === "/"} />}
+                    className="px-3 py-2"
+                  >
+                    {item.label}
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
               ))}
-            </nav>
-          </SheetContent>
-        </Sheet>
+            </NavigationMenuList>
+          </NavigationMenu>
+
+          <ModeToggle />
+
+          {/* 手機:漢堡 + 抽屜 (< md) */}
+          <Sheet>
+            <SheetTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="md:hidden"
+                  aria-label="開啟導覽選單"
+                />
+              }
+            >
+              <Menu />
+            </SheetTrigger>
+            <SheetContent side="right" className="w-72">
+              <SheetHeader>
+                <SheetTitle>AiDesign</SheetTitle>
+              </SheetHeader>
+              <nav className="flex flex-col gap-1 px-2 pb-4">
+                {NAV_ITEMS.map((item) => (
+                  <SheetClose
+                    key={item.to}
+                    render={
+                      <NavLink
+                        to={item.to}
+                        end={item.to === "/"}
+                        className="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-muted aria-[current=page]:bg-muted"
+                      >
+                        {item.label}
+                      </NavLink>
+                    }
+                  />
+                ))}
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </header>
   )
