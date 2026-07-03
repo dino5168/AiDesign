@@ -11,10 +11,11 @@ permissions:
   pages: write
   id-token: write
 
-# 同時只允許一個部署進行;新 push 會取消進行中的舊部署
+# 同時只允許一個 Pages 部署;讓進行中的部署跑完,不可取消
+# (取消發布中的部署會導致 Pages 後端卡住,後續部署回報 Deployment failed)
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
